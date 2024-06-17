@@ -1,50 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('computerDiagram');
-    const ctx = canvas.getContext('2d');
-
-    canvas.width = 600;
-    canvas.height = 400;
-
-    ctx.fillStyle = '#e0e0e0';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#333';
-    ctx.fillRect(100, 50, 400, 300);
-
-    ctx.fillStyle = '#fff';
-    ctx.font = '16px Arial';
-    ctx.fillText('CPU', 150, 100);
-    ctx.fillText('RAM', 150, 150);
-    ctx.fillText('Storage', 150, 200);
-    ctx.fillText('Motherboard', 150, 250);
-    ctx.fillText('PSU', 150, 300);
-
-    const components = [
-        { name: 'CPU', x: 150, y: 100 },
-        { name: 'RAM', x: 150, y: 150 },
-        { name: 'Storage', x: 150, y: 200 },
-        { name: 'Motherboard', x: 150, y: 250 },
-        { name: 'PSU', x: 150, y: 300 }
+    const quizContainer = document.getElementById('quiz-container');
+    const questions = [
+        {
+            question: "What does CPU stand for?",
+            options: ["Central Processing Unit", "Computer Personal Unit", "Central Peripheral Unit"],
+            answer: "Central Processing Unit"
+        },
+        {
+            question: "Which component is known as the brain of the computer?",
+            options: ["RAM", "CPU", "Hard Drive"],
+            answer: "CPU"
+        },
+        {
+            question: "What is the purpose of the cooling system?",
+            options: ["Store data", "Perform calculations", "Prevent overheating"],
+            answer: "Prevent overheating"
+        }
     ];
 
-    components.forEach(component => {
-        ctx.fillStyle = 'red';
-        ctx.fillRect(component.x - 5, component.y - 15, ctx.measureText(component.name).width + 10, 20);
-        ctx.fillStyle = '#fff';
-        ctx.fillText(component.name, component.x, component.y);
+    let quizHTML = '';
+
+    questions.forEach((q, index) => {
+        quizHTML += `<div class="question">
+            <h4>${q.question}</h4>
+            <ul>`;
+        q.options.forEach(option => {
+            quizHTML += `<li><input type="radio" name="q${index}" value="${option}"> ${option}</li>`;
+        });
+        quizHTML += `</ul>
+        </div>`;
     });
 
-    canvas.addEventListener('click', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+    quizContainer.innerHTML = quizHTML;
 
-        components.forEach(component => {
-            if (
-                x >= component.x - 5 && x <= component.x - 5 + ctx.measureText(component.name).width + 10 &&
-                y >= component.y - 15 && y <= component.y + 5
-            ) {
-                alert(`You clicked on ${component.name}`);
+    // Add event listener to check answers
+    quizContainer.addEventListener('change', (e) => {
+        const allQuestions = document.querySelectorAll('.question');
+        allQuestions.forEach((q, i) => {
+            const selectedOption = q.querySelector('input[type="radio"]:checked');
+            if (selectedOption) {
+                const isCorrect = selectedOption.value === questions[i].answer;
+                q.style.backgroundColor = isCorrect ? 'lightgreen' : 'lightcoral';
             }
         });
     });
